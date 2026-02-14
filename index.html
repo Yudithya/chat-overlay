@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Chat Overlay Demo</title>
+  <style>
+    body { margin:0; background: transparent; overflow:hidden; font-family: ui-sans-serif, system-ui; }
+    #chat {
+      position: absolute; bottom: 40px; left: 40px;
+      width: 520px; display:flex; flex-direction:column; gap:12px;
+    }
+    .msg {
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      transform: translateY(10px) scale(0.98);
+      opacity: 0;
+      animation: in 380ms ease-out forwards;
+    }
+    .name { font-weight: 800; font-size: 14px; letter-spacing: .2px; }
+    .text { margin-top: 4px; font-size: 16px; line-height: 1.25; }
+    @keyframes in {
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .out { animation: out 250ms ease-in forwards; }
+    @keyframes out {
+      to { transform: translateY(8px) scale(0.98); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="chat"></div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const MAX = 7;
+    const TTL = 18000; // ms
+
+    function addMessage(name, text) {
+      const el = document.createElement("div");
+      el.className = "msg";
+      el.innerHTML = `
+        <div class="name">${name}</div>
+        <div class="text">${text}</div>
+      `;
+      chat.prepend(el);
+
+      // keep max
+      while (chat.children.length > MAX) chat.lastElementChild.remove();
+
+      // auto remove
+      setTimeout(() => {
+        el.classList.add("out");
+        setTimeout(() => el.remove(), 260);
+      }, TTL);
+    }
+
+    // demo dummy messages
+    const samples = [
+      ["fel1naaa", "manifesting commissions rn ✨"],
+      ["chat", "OMG THE COLORS ARE SO CUTE??"],
+      ["viewer01", "can you do a dreamy ocean vibe pls? 🐙"],
+      ["mod", "welcome welcome!!"]
+    ];
+    let i = 0;
+    setInterval(() => {
+      const [n,t] = samples[i % samples.length];
+      addMessage(n, t);
+      i++;
+    }, 2400);
+  </script>
+</body>
+</html>
